@@ -1,16 +1,22 @@
 package com.firemstar.fum.db.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="TUser")
-public class User {
+public class TUser {
 	
 	@Id
 	@GeneratedValue
@@ -37,11 +43,15 @@ public class User {
 	@Column(name="modifiedDate")
 	private Date modifiedDate;
 	
-	public User() {
-		
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@JoinColumn(name="uid")
+	private List<TUserRole> roles;
+	
+	public TUser() {
+		roles = new ArrayList<TUserRole>();
 	}
 
-	public User(String userId, String name, String password, String email, String accessToken, Date createDate,
+	public TUser(String userId, String name, String password, String email, String accessToken, Date createDate,
 			Date modifiedDate) {
 		super();
 		this.userId = userId;
@@ -51,6 +61,7 @@ public class User {
 		this.accessToken = accessToken;
 		this.createDate = createDate;
 		this.modifiedDate = modifiedDate;
+		roles = new ArrayList<TUserRole>();
 	}
 
 	public String getUserId() {
@@ -109,16 +120,20 @@ public class User {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public List<TUserRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<TUserRole> roles) {
+		this.roles = roles;
+	}
+
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", password=" + password + ", email=" + email
-				+ ", accessToken=" + accessToken + ", createDate=" + createDate + ", modifiedDate=" + modifiedDate
-				+ "]";
+		return "TUser [id=" + id + ", userId=" + userId + ", name=" + name + ", password=" + password + ", email="
+				+ email + ", accessToken=" + accessToken + ", createDate=" + createDate + ", modifiedDate="
+				+ modifiedDate + ", roles=" + roles + "]";
 	}
-	
-	
-	
-	
 	
 
 }

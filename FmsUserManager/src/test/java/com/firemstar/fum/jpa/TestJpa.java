@@ -12,7 +12,8 @@ import javax.persistence.Persistence;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.firemstar.fum.db.model.AccessLog;
-import com.firemstar.fum.db.model.User;
+import com.firemstar.fum.db.model.TUser;
+import com.firemstar.fum.db.model.TUserRole;
 import com.firemstar.fum.repository.UserDAO;
 
 import org.junit.After;
@@ -51,7 +52,7 @@ public class TestJpa {
 	public void tearDown() throws Exception {
 	}
 	
-	@Test
+	//@Test
 	public void test2() {
 		AccessLog tokens = this.userDAO.getByAccessLog("moonsuchstar@firemstar.com");
 		logger.info("tokens : " + tokens);
@@ -61,10 +62,10 @@ public class TestJpa {
 		} */
 	}
 
-	//@Test
+	@Test
 	public void test() {
 		logger.info(">>>>>>>> test ok <<<<<<<<");
-		User user = new User();
+		TUser user = new TUser();
 		user.setUserId("moonsuchstar@firemstar.com");
 		user.setName("moonstar");
 		user.setEmail("moonsuchstar@firemstar.com");
@@ -72,6 +73,9 @@ public class TestJpa {
 		user.setCreateDate(new Date());
 		user.setModifiedDate(new Date());
 		user.setAccessToken(UUID.randomUUID().toString());
+		
+		TUserRole role = new TUserRole("BASIC");
+		user.getRoles().add(role); 
 		logger.info(">>>>> user : " + user.toString());
 		this.userDAO.create(user);
 	}

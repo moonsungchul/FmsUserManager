@@ -86,10 +86,28 @@ class TestRest:
         """
         self.postJson(url, user)
 
+    def createUser(self):
+        url = self.base_url + "user"
+        print("url : " + url)
+        user = """
+        {
+            "userId" : "moonsuchstar1@firemstar.com", 
+            "name" : "moon", 
+            "password" : "wooag01", 
+            "email" : "moonsuchstar1@firemstar.com", 
+            "accessToken" : "", 
+            "createDate" : "", 
+            "modifiedDate" : "",
+            "roles" : ["BASIC"]
+        }
+        """
+        self.postJson(url, user)
+
 
 if __name__ == '__main__':
     rest = TestRest()
     rest.login()
+    #rest.createUser()
         
 
      

@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import com.firemstar.fum.db.model.AccessLog;
-import com.firemstar.fum.db.model.User;
+import com.firemstar.fum.db.model.TUser;
 
 @Repository
 @Transactional
@@ -18,11 +18,11 @@ public class UserDAO {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	public void create(User user) {
+	public void create(TUser user) {
 		entityManager.persist(user);
 	}
 	
-	public void delete(User user) {
+	public void delete(TUser user) {
 		if(entityManager.contains(user)) entityManager.remove(user);
 		else {
 			entityManager.remove(entityManager.merge(user));
@@ -31,38 +31,45 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List getAll() {
-		return entityManager.createQuery("from User").getResultList();
+		return entityManager.createQuery("from TUser").getResultList();
 	}
 	
-	public User getByEmail(String email) {
-		return (User) entityManager.createQuery(
-				"from User where email = :email")
+	public TUser getByEmail(String email) {
+		return (TUser) entityManager.createQuery(
+				"from TUser where email = :email")
 				.setParameter("email", email)
 				.getSingleResult();
 	}
 	
-	public User getByUser(String userId, String passwd) {
-		return (User) entityManager.createQuery(
-				"from User where userId = :userId and password = :passwd")
+	public TUser getByUser(String userId, String passwd) {
+		return (TUser) entityManager.createQuery(
+				"from TUser where userId = :userId and password = :passwd")
 				.setParameter("userId", userId)
 				.setParameter("passwd", passwd)
 				.getSingleResult();
 	}
 	
-	public User getByAccessToken(String userId, String accessToken) {
-		return (User) entityManager.createQuery(
-				"from User where userId = :userId and accessToken = :accessToken")
+	public TUser getByUser(String userId) {
+		return (TUser) entityManager.createQuery(
+				"from TUser where userId = :userId ")
+				.setParameter("userId", userId)
+				.getSingleResult();
+	}
+	
+	public TUser getByAccessToken(String userId, String accessToken) {
+		return (TUser) entityManager.createQuery(
+				"from TUser where userId = :userId and accessToken = :accessToken")
 				.setParameter("userId", userId)
 				.setParameter("accessToken", accessToken)
 				.getSingleResult();
 	}
 	
 	
-	public User getById(long id) {
-		return entityManager.find(User.class, id);
+	public TUser getById(long id) {
+		return entityManager.find(TUser.class, id);
 	}
 	
-	public void update(User user) {
+	public void update(TUser user) {
 		entityManager.merge(user);
 	}
 	

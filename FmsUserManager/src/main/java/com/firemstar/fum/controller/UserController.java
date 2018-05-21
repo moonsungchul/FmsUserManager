@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.firemstar.fum.beans.RetMsg;
 import com.firemstar.fum.db.model.AccessLog;
-import com.firemstar.fum.db.model.User;
+import com.firemstar.fum.db.model.TUser;
 import com.firemstar.fum.exception.BaseException;
 import com.firemstar.fum.repository.UserDAO;
 
@@ -34,16 +35,40 @@ public class UserController {
 		return "FmsUsrManager version 0.1";
 	}
 	
+	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	@ResponseBody
+	public TUser createUser(@RequestBody TUser user) {
+		logger.info(">>>>>> create user : " + user.toString());
+		if(user == null)
+			throw new BaseException("base exception"); 
+		if(user.getUserId().isEmpty()) throw new BaseException("userId is empty...");
+		if(user.getName().isEmpty()) throw new BaseException("name is empty...");
+		if(user.getEmail().isEmpty()) throw new BaseException("email is empty ...");
+		if(user.getPassword().isEmpty()) throw new BaseException("password is empty ...");
+		
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String passwd = passwordEncoder.encode(user.getPassword()).toString();
+		user.setPassword(passwd);
+		user.setAccessToken("");
+		user.setCreateDate(new Date());
+		user.setModifiedDate(new Date());
+		logger.info("create user : " + user.toString());
+		userDAO.create(user);
+		return user;
+		
+	}
+	
+	
 	
 	@RequestMapping(value = "/user/logout", method = RequestMethod.POST)
 	@ResponseBody
-	public User logout(@RequestBody User user) {
+	public TUser logout(@RequestBody TUser user) {
 		if(user == null)
 			throw new BaseException("base exception"); 
 		if(user.getUserId().isEmpty()) throw new BaseException("userId is empty...");
 		if(user.getPassword().isEmpty()) throw new BaseException("password is empty...");
 		
-		User user2 = this.userDAO.getByAccessToken(user.getUserId(), user.getAccessToken());
+		TUser user2 = this.userDAO.getByAccessToken(user.getUserId(), user.getAccessToken());
 		if(user2 == null) throw new BaseException("user is not found");
 		
 		AccessLog accessLog = this.userDAO.getByAccessLog(user2.getUserId());
@@ -63,14 +88,14 @@ public class UserController {
 	
 	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
 	@ResponseBody
-	public User login(@RequestBody User user) {
+	public TUser login(@RequestBody TUser user) {
 		if(user == null)
 			throw new BaseException("base exception"); 
 		
 		if(user.getUserId().isEmpty()) throw new BaseException("userId is empty...");
 		if(user.getPassword().isEmpty()) throw new BaseException("password is empty...");
 		
-		User user2 = this.userDAO.getByUser(user.getUserId(), user.getPassword());
+		TUser user2 = this.userDAO.getByUser(user.getUserId(), user.getPassword());
 		if(user2 == null) throw new BaseException("user is not found");
 		
 		user2.setAccessToken(UUID.randomUUID().toString());
