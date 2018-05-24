@@ -30,9 +30,10 @@ public class UserDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List getAll() {
+	public List<TUser> getAll() {
 		return entityManager.createQuery("from TUser").getResultList();
 	}
+	
 	
 	public TUser getByEmail(String email) {
 		return (TUser) entityManager.createQuery(

@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.firemstar.fum.db.model.TUserRole;
 
+@SuppressWarnings("serial")
 public class SimpleUserDetail implements UserDetails {
 	
 	private static final long serialVersionUID = -4910129348688612117L;

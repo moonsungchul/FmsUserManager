@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.firemstar.fum.db.model.TUser;
@@ -25,12 +26,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> load user by username ");
+		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> load user by username :  " + name);
 		TUser uu = userDAO.getByUser(name);
+		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> load user TUser : " + uu);
 		if(uu != null) {
-			SimpleUserDetail detail = new SimpleUserDetail(uu.getUserId(), uu.getPassword(), uu.getRoles());
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String passwd = passwordEncoder.encode(uu.getPassword()).toString();
+			SimpleUserDetail detail = new SimpleUserDetail(uu.getUserId(), passwd, uu.getRoles());
+			logger.info(">>>>>> simple user detail : " + detail );
 			return detail;
 		}
+		logger.info(">>>>>> errror user : " + uu);
 		throw new UsernameNotFoundException("No user found for username " + name);
 	}
 }

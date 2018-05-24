@@ -22,6 +22,8 @@ class TestRest:
         response.close()
         return ret
 
+
+
     def getJson(self, url):
         req = urllib2.Request(url)
         req.add_header('Content-Type','application/json')
@@ -103,11 +105,25 @@ class TestRest:
         """
         self.postJson(url, user)
 
+    def getVersion(self):
+        url = self.base_url + "user/version"
+        print("url : " + url)
+        self.getJson(url)
+
+    def getUsers(self):
+        url = self.base_url + "users"
+        print("url : " + url)
+        data = self.getJson(url)
+        print(data)
+
+
 
 if __name__ == '__main__':
     rest = TestRest()
     rest.login()
     #rest.createUser()
+    #rest.getVersion()
+    #rest.getUsers()
         
 
      
